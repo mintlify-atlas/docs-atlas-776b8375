@@ -1,0 +1,99 @@
+---
+title: "Run BedrockConnect on your own server"
+description: "Download and run the BedrockConnect JAR on any machine with Java 8+. Covers startup args, config file, environment variables, and console commands."
+---
+
+BedrockConnect runs as a single JAR file and requires no installation beyond Java. Once running, it listens for Minecraft: Bedrock Edition clients on UDP port 19132 and presents them with a server-list interface. This page walks you through downloading the JAR, starting the server, and configuring it for your setup.
+
+## Requirements
+
+- Java 8 or higher
+
+## Initial setup
+
+<Steps>
+  <Step title="Download the JAR">
+    Download the latest release from [github.com/Pugmatt/BedrockConnect/releases](https://github.com/Pugmatt/BedrockConnect/releases). Look for `BedrockConnect-1.0-SNAPSHOT.jar` under the release assets.
+  </Step>
+
+  <Step title="Start the server">
+    Run the JAR with Java from the directory where you saved it:
+
+    ```bash
+    java -jar BedrockConnect-1.0-SNAPSHOT.jar
+    ```
+
+    The server binds to `0.0.0.0:19132` (UDP) by default. You should see startup log output confirming the server is running.
+  </Step>
+
+  <Step title="Configure the server">
+    You can configure BedrockConnect in three ways: startup arguments, a `config.yml` file, or environment variables. See [Configuration methods](#configuration-methods) below.
+  </Step>
+
+  <Step title="Set up a join method for consoles">
+    If your PlayStation or Xbox is on the same local network as the machine running BedrockConnect, players can join immediately via the **Worlds** tab in-game without any additional setup.
+
+    For connections outside your local network, or from Nintendo Switch, you need to configure DNS redirection so that featured server domains point to your BedrockConnect instance. See the [DNS setup guide](/hosting/dns-setup).
+  </Step>
+</Steps>
+
+## Configuration methods
+
+BedrockConnect reads configuration from three sources, applied in this order: startup arguments, `config.yml`, then environment variables. All three methods support the same set of settings. For a complete reference of every available setting, see the [configuration and settings](/configuration/settings) page.
+
+<Tabs>
+  <Tab title="Startup arguments">
+    Pass settings directly on the command line as `key=value` pairs:
+
+    ```bash
+    java -jar BedrockConnect-1.0-SNAPSHOT.jar port=19132 server_limit=50
+    ```
+
+    Multiple arguments are separated by spaces. This is the simplest approach for quick configuration changes.
+  </Tab>
+
+  <Tab title="config.yml">
+    Create a `config.yml` file in the same directory as the JAR. BedrockConnect automatically reads it on startup:
+
+    ```yaml config.yml
+    port: 19132
+    server_limit: 100
+    kick_inactive: true
+    user_servers: true
+    featured_servers: true
+    ```
+
+    The YAML keys match the setting names exactly as documented in the configuration reference.
+  </Tab>
+
+  <Tab title="Environment variables">
+    Prefix any setting name with `BC_` and set it as an environment variable. BedrockConnect reads all variables matching this prefix at startup:
+
+    ```bash
+    export BC_PORT=19132
+    export BC_SERVER_LIMIT=100
+    java -jar BedrockConnect-1.0-SNAPSHOT.jar
+    ```
+
+    Environment variable names are case-insensitive. This method is especially useful when running BedrockConnect in Docker or other containerized environments.
+  </Tab>
+</Tabs>
+
+## Console commands
+
+While the server is running, you can type commands directly into the console:
+
+| Command | Description |
+| --- | --- |
+| `stop` | Gracefully stops the server. |
+| `end` | Alias for `stop`. |
+| `reload motd` | Reloads the MOTD message from the currently configured file. |
+| `reload motd <file>` | Reloads the MOTD message from a specific file path. |
+
+## LAN access for consoles
+
+If your PlayStation or Xbox console is on the same network as the machine running BedrockConnect, no DNS or network configuration is required. Open Minecraft, go to the **Worlds** tab, and your BedrockConnect instance appears as a joinable world automatically.
+
+<Note>
+  Nintendo Switch does not support LAN discovery in the same way. Switch players need to connect using the DNS method regardless of network proximity.
+</Note>

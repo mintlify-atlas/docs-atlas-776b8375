@@ -1,0 +1,102 @@
+---
+title: "Deploy BedrockConnect with Docker"
+description: "Run BedrockConnect and an optional bind9 DNS server using Docker or Docker Compose. Includes environment variable configuration and custom server setup."
+---
+
+The official `pugmatt/bedrock-connect` image lets you run BedrockConnect without installing Java directly on your host. You can use a single `docker run` command for a minimal setup, or a Docker Compose file to spin up both BedrockConnect and a bind9 DNS server together.
+
+## Quick start
+
+<CodeGroup>
+
+```bash Docker
+docker run -p 19132:19132/udp pugmatt/bedrock-connect
+```
+
+```yaml docker-compose.yml
+version: "3"
+services:
+  bedrockconnect:
+    build: ./bedrockconnect
+    ports:
+      - "19132:19132/udp"
+  bind9:
+    build:
+      context: ./bind9
+      args:
+        BCIP: 104.238.130.180
+        NSIP: 104.238.130.180
+    ports:
+      - "53:53/udp"
+```
+
+</CodeGroup>
+
+The Docker Compose file is included in the [`docker/` directory of the repository](https://github.com/Pugmatt/BedrockConnect/tree/master/docker). Run it with:
+
+```bash
+docker compose up
+# or, for detached mode:
+docker compose up -d
+```
+
+## Environment variables
+
+BedrockConnect reads any environment variable prefixed with `BC_` as a configuration setting. Pass them to the container with `-e` flags or under the `environment` key in your Compose file:
+
+```bash
+docker run -p 19132:19132/udp \
+  -e BC_SERVER_LIMIT=50 \
+  -e BC_KICK_INACTIVE=true \
+  pugmatt/bedrock-connect
+```
+
+The `BC_` prefix is stripped when the setting is applied, so `BC_SERVER_LIMIT` sets `server_limit`. For a complete list of available settings, see the [configuration and settings](/configuration/settings) page.
+
+## Custom DNS with Docker Compose
+
+The Compose file includes a bind9 container that redirects Minecraft's featured server domains to your BedrockConnect instance. Two build arguments control where DNS traffic is directed:
+
+| Argument | Description |
+| --- | --- |
+| `BCIP` | IP address of your BedrockConnect server. Defaults to `104.238.130.180`. |
+| `NSIP` | IP address used as the DNS name server. Defaults to the same value as `BCIP`. |
+
+Update both values in `docker-compose.yml` to the IP address of your Docker host before running. For example, if your host IP is `192.168.1.100`:
+
+```yaml docker-compose.yml
+    args:
+      BCIP: 192.168.1.100
+      NSIP: 192.168.1.100
+```
+
+<Warning>
+  On Linux, the `resolvconf.service` may already be bound to port 53, which prevents the bind9 container from starting. Stop and disable it before running Docker Compose:
+
+  ```bash
+  sudo systemctl stop resolvconf.service
+  sudo systemctl disable resolvconf.service
+  ```
+</Warning>
+
+## Custom servers
+
+The repository includes a `docker/custom-servers/` example that mounts a `custom_servers.json` file into the container so you can pre-populate the server list shown to players.
+
+```yaml docker/custom-servers/docker-compose.yml
+version: "2"
+services:
+  app:
+    build: .
+    restart: always
+    ports:
+      - "19132:19132/udp"
+    volumes:
+      - ./custom_servers.json:/app/custom_servers.json
+```
+
+Edit `custom_servers.json` to add your servers, then run `docker compose up -d` from the `docker/custom-servers/` directory.
+
+## Raspberry Pi
+
+A `docker/raspberry-pi/` directory in the repository contains configuration files for running BedrockConnect on ARM-based hardware such as the Raspberry Pi. Use those files in place of the standard Docker Compose setup when deploying to an ARM device.

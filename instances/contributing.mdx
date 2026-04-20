@@ -1,0 +1,88 @@
+---
+title: "Host and contribute a BedrockConnect instance"
+description: "Set up your own BedrockConnect instance and optionally list it in the community registry for other players to use."
+---
+
+Running your own BedrockConnect instance gives you full control over the server list your players see, lets you place the server closer to your region, and removes any dependency on third-party uptime. You can keep it private for your own use or add it to the public community list for others to benefit from.
+
+## Why host your own instance
+
+- **Performance** — players in your region get lower latency by connecting to a geographically closer server.
+- **Custom server list** — pre-populate the server list with your own servers so players see them immediately on first connect.
+- **Privacy** — no player data passes through servers you don't control.
+- **Reliability** — you aren't affected by outages on community-run instances.
+
+## Requirements
+
+Before you start, make sure you have:
+
+- **Java 8 or higher** installed on your host machine
+- **UDP port 19132** open for BedrockConnect connections
+- **UDP port 53** open if you want to support the DNS method (required for console players using the recommended DNS setup)
+
+## Get started
+
+<Steps>
+  <Step title="Download BedrockConnect">
+    Grab the latest release JAR from the [BedrockConnect releases page](https://github.com/Pugmatt/BedrockConnect/releases).
+  </Step>
+  <Step title="Run the server">
+    Start BedrockConnect with:
+
+    ```bash
+    java -jar BedrockConnect-1.0-SNAPSHOT.jar
+    ```
+
+    Or use the official Docker image if you prefer containers:
+
+    ```bash
+    docker run -p 19132:19132/udp pugmatt/bedrock-connect
+    ```
+  </Step>
+  <Step title="Set up a join method for consoles">
+    If your console is on the same LAN as the host machine, PlayStation and Xbox players can join directly through the **Worlds** tab in-game — no extra setup needed.
+
+    For connections outside your network, or for Nintendo Switch, you need to configure a join method. The DNS method is recommended: see the setup guides linked below.
+  </Step>
+  <Step title="Configure your instance">
+    BedrockConnect supports a range of settings including custom server lists, whitelists, MOTD messages, and database backends. See the [configuration settings reference](/configuration/settings) for all available options.
+  </Step>
+</Steps>
+
+## Setup guides
+
+<CardGroup cols={2}>
+  <Card title="Running the server" icon="server" href="/hosting/running-the-server">
+    Full instructions for downloading, configuring, and running BedrockConnect on your own hardware.
+  </Card>
+  <Card title="Docker setup" icon="docker" href="/hosting/docker">
+    Run BedrockConnect in a container using the official Docker image or a docker-compose file with DNS included.
+  </Card>
+</CardGroup>
+
+## Add your instance to the public list
+
+If your instance is stable and you want other players to be able to use it, you can submit it for inclusion in the community registry.
+
+<Steps>
+  <Step title="Meet the listing requirements">
+    Before submitting, make sure your instance:
+
+    - Has the DNS method enabled (strongly preferred for console players)
+    - Has stable, long-term uptime you can commit to maintaining
+    - Is reachable on a public IP address
+  </Step>
+  <Step title="Open a pull request">
+    Fork the [BedrockConnect repository](https://github.com/Pugmatt/BedrockConnect) and add a row for your instance to the community instances table in `README.md`. Include your IP address, DNS method support, location, and your GitHub username as maintainer.
+  </Step>
+  <Step title="Submit and wait for review">
+    Open the pull request against the main branch. The maintainer will review and merge it once everything checks out.
+  </Step>
+</Steps>
+
+## Support the project
+
+BedrockConnect has been free and open-source since 2019. Sponsoring helps keep the main public instance running and supports continued development.
+
+- [GitHub Sponsors](https://github.com/sponsors/Pugmatt)
+- [Patreon](https://www.patreon.com/Pugmatt)

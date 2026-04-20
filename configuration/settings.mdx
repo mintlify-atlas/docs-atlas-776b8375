@@ -1,0 +1,177 @@
+---
+title: "BedrockConnect configuration settings full reference"
+description: "Complete reference for every BedrockConnect setting: port, database, server list, MOTD, whitelist, and packet limits. Set via config.yml, args, or env."
+---
+
+BedrockConnect supports three ways to pass configuration: a `config.yml` file, startup arguments appended to the JAR invocation, or environment variables prefixed with `BC_`. All three methods are equivalent — you can mix them, with startup arguments taking precedence over the config file, and environment variables taking precedence over both.
+
+## Setting configuration values
+
+<Tabs>
+  <Tab title="config.yml">
+    Create a `config.yml` file in the same directory as the JAR and add key-value pairs:
+
+    ```yaml
+    port: 19132
+    bindip: 0.0.0.0
+    server_limit: 100
+    ```
+  </Tab>
+  <Tab title="Startup args">
+    Append `key=value` pairs after the JAR name on the command line:
+
+    ```bash
+    java -jar BedrockConnect-1.0-SNAPSHOT.jar port=19132 server_limit=100
+    ```
+  </Tab>
+  <Tab title="Environment variables">
+    Prefix any setting name with `BC_` (uppercase) and set it before running the JAR:
+
+    ```bash
+    BC_PORT=19132 BC_SERVER_LIMIT=100 java -jar BedrockConnect-1.0-SNAPSHOT.jar
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Server
+
+<ParamField path="port" type="string" default="19132">
+  UDP port BedrockConnect listens on. Change this if you need to run the server on a non-standard port or if port 19132 is already in use. Environment variable: `BC_PORT`.
+</ParamField>
+
+<ParamField path="bindip" type="string" default="0.0.0.0">
+  IP address BedrockConnect binds to. The default `0.0.0.0` listens on all available interfaces. Set this to a specific IP if you want to restrict which network interface accepts connections. Environment variable: `BC_BINDIP`.
+</ParamField>
+
+<ParamField path="server_limit" type="string" default="100">
+  Maximum number of servers a single player can save in their personal server list. When a player reaches this limit they must remove a server before adding another. Environment variable: `BC_SERVER_LIMIT`.
+</ParamField>
+
+<ParamField path="online_mode" type="boolean" default="true">
+  When enabled, BedrockConnect verifies that connecting players have authenticated with Xbox Live. Set to `false` only if you are running a fully offline/LAN environment. Environment variable: `BC_ONLINE_MODE`.
+</ParamField>
+
+---
+
+## Database
+
+By default BedrockConnect stores each player's server list as a local file on disk. A relational database is only needed when you require persistent storage with an external system or are planning multi-instance setups.
+
+<ParamField path="db_type" type="string" default="none">
+  Database backend to use. Accepted values: `none` (local file storage), `mysql`, `mariadb`, `postgres`. Setting any value other than `none` enables database storage. Environment variable: `BC_DB_TYPE`.
+
+  <Note>
+    The legacy `nodb` argument is no longer the recommended way to control database usage. Use `db_type=none` (or omit `db_type`) for local file storage.
+  </Note>
+</ParamField>
+
+<ParamField path="db_host" type="string" default="localhost">
+  Hostname or IP address of the database server. Environment variable: `BC_DB_HOST`.
+</ParamField>
+
+<ParamField path="db_db" type="string" default="bedrock-connect">
+  Name of the database (schema) BedrockConnect will use. The database must already exist before starting the server. Environment variable: `BC_DB_DB`.
+</ParamField>
+
+<ParamField path="db_user" type="string" default="root">
+  Database username. Environment variable: `BC_DB_USER`.
+</ParamField>
+
+<ParamField path="db_pass" type="string" default='""'>
+  Database password. Leave empty for no password. Environment variable: `BC_DB_PASS`.
+</ParamField>
+
+<ParamField path="auto_reconnect" type="boolean" default="false">
+  When enabled, BedrockConnect appends `autoReconnect=true` to the JDBC connection string so the driver automatically attempts to re-establish a dropped database connection. Environment variable: `BC_AUTO_RECONNECT`.
+</ParamField>
+
+### Legacy MySQL settings
+
+<Warning>
+  The `mysql_host`, `mysql_db`, `mysql_user`, and `mysql_pass` arguments are deprecated and may be removed in a future release. Replace them with the `db_*` equivalents and set `db_type=mysql`.
+</Warning>
+
+| Legacy argument | Replacement         |
+| --------------- | ------------------- |
+| `mysql_host`    | `db_host`           |
+| `mysql_db`      | `db_db`             |
+| `mysql_user`    | `db_user`           |
+| `mysql_pass`    | `db_pass`           |
+
+---
+
+## Player experience
+
+<ParamField path="user_servers" type="boolean" default="true">
+  Allow players to add their own custom server entries to their personal list. Set to `false` to prevent players from entering arbitrary server addresses — useful when you want to restrict connections to your curated `custom_servers` list only. Environment variable: `BC_USER_SERVERS`.
+</ParamField>
+
+<ParamField path="featured_servers" type="boolean" default="true">
+  Show the Minecraft featured servers (Hive, CubeCraft, Lifeboat, etc.) in the server list. Set to `false` to hide them entirely. Environment variable: `BC_FEATURED_SERVERS`.
+</ParamField>
+
+<ParamField path="fetch_featured_ips" type="boolean" default="true">
+  Dynamically resolve the real IP addresses of featured servers at startup. When set to `false`, BedrockConnect writes a `featured_server_ips.json` file with hard-coded fallback IPs on first run, then reads from that file on subsequent starts. Environment variable: `BC_FETCH_FEATURED_IPS`.
+</ParamField>
+
+<ParamField path="fetch_ips" type="boolean" default="false">
+  When enabled, BedrockConnect resolves server addresses to IPs before passing them to the client. Environment variable: `BC_FETCH_IPS`.
+</ParamField>
+
+<ParamField path="store_display_names" type="boolean" default="true">
+  Persist the player's display name alongside their saved server list. Environment variable: `BC_STORE_DISPLAY_NAMES`.
+</ParamField>
+
+<ParamField path="kick_inactive" type="boolean" default="true">
+  Kick players who remain idle in the BedrockConnect server list without taking any action. Helps free up connections. Environment variable: `BC_KICK_INACTIVE`.
+</ParamField>
+
+<ParamField path="custom_servers" type="string">
+  Path to a JSON file containing servers to pre-populate in the server list. See [Add custom servers](/configuration/custom-servers) for the file format. Environment variable: `BC_CUSTOM_SERVERS`.
+</ParamField>
+
+<ParamField path="whitelist" type="string">
+  Path to a plain-text file listing allowed player display names. When set, only players whose names appear in this file can connect. See [Whitelist](/configuration/whitelist) for details. Environment variable: `BC_WHITELIST`.
+</ParamField>
+
+<ParamField path="language" type="string">
+  Path to a JSON file that overrides default UI strings. Only the keys you include are changed — everything else falls back to the built-in defaults. See [Customize UI text](/configuration/language) for the full key reference. Environment variable: `BC_LANGUAGE`.
+</ParamField>
+
+---
+
+## MOTD
+
+<ParamField path="motd" type="string">
+  Path to a plain-text file whose contents are displayed to players as a message of the day. When not set, no MOTD is shown. Environment variable: `BC_MOTD`.
+</ParamField>
+
+<ParamField path="motd_first_join" type="boolean" default="true">
+  Show the MOTD only on a player's first connection. When set to `false`, the MOTD is shown on every join (subject to `motd_cooldown`). Environment variable: `BC_MOTD_FIRST_JOIN`.
+</ParamField>
+
+<ParamField path="motd_cooldown" type="integer" default="0">
+  Minimum number of seconds that must elapse before the MOTD is shown to the same player again. A value of `0` disables the cooldown. This setting has no effect when `motd_first_join` is `true`. Environment variable: `BC_MOTD_COOLDOWN`.
+</ParamField>
+
+---
+
+## Security
+
+<ParamField path="packet_limit" type="integer" default="200">
+  Maximum number of packets accepted per second from a single player before they are rate-limited. Lowering this value reduces the impact of packet-flood attacks but may affect clients on high-latency connections. Environment variable: `BC_PACKET_LIMIT`.
+</ParamField>
+
+<ParamField path="global_packet_limit" type="integer">
+  Maximum total packets per second accepted across all connected players. Defaults to the value of `RakConstants.DEFAULT_GLOBAL_PACKET_LIMIT` from the CloudburstMC RakNet library. Override this only if you have specific throughput requirements. Environment variable: `BC_GLOBAL_PACKET_LIMIT`.
+</ParamField>
+
+---
+
+## Advanced
+
+<ParamField path="debug" type="boolean" default="false">
+  Enable verbose debug logging. When active, BedrockConnect logs Java and OS details, the full resolved configuration (with database credentials redacted), and internal language and server data. Only enable this when diagnosing a specific issue. Environment variable: `BC_DEBUG`.
+</ParamField>

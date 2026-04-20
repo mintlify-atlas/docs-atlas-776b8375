@@ -1,0 +1,90 @@
+---
+title: "Restrict BedrockConnect access using a player whitelist"
+description: "Limit who can use your BedrockConnect instance with a whitelist of allowed Minecraft display names. Unlisted players are disconnected on connect."
+---
+
+The whitelist restricts who can use your BedrockConnect instance. When enabled, any player whose display name does not appear in the whitelist file is disconnected immediately with the message "You are not whitelisted on this server." Players who are whitelisted connect normally and see the full server list interface.
+
+## Enable the whitelist
+
+Point the `whitelist` setting at a plain-text file containing allowed player names:
+
+<Tabs>
+  <Tab title="config.yml">
+    ```yaml
+    whitelist: /path/to/whitelist.txt
+    ```
+  </Tab>
+  <Tab title="Startup args">
+    ```bash
+    java -jar BedrockConnect-1.0-SNAPSHOT.jar whitelist=/path/to/whitelist.txt
+    ```
+  </Tab>
+  <Tab title="Environment variable">
+    ```bash
+    BC_WHITELIST=/path/to/whitelist.txt java -jar BedrockConnect-1.0-SNAPSHOT.jar
+    ```
+  </Tab>
+</Tabs>
+
+When the whitelist loads successfully, BedrockConnect logs how many players are listed:
+
+```
+[INFO] Loaded 3 whitelisted players
+```
+
+If the file cannot be found or read, BedrockConnect exits with an error.
+
+---
+
+## Whitelist file format
+
+The whitelist file is a plain-text file with one player display name per line:
+
+```
+Steve
+Alex
+Notch
+```
+
+Save the file with UTF-8 encoding. Blank lines are read as entries and will not match any player, so keep the file clean.
+
+---
+
+## How matching works
+
+BedrockConnect checks the player's **display name** — the name shown in-game — against the entries in the whitelist. The check is case-sensitive, so `steve` and `Steve` are treated as different entries.
+
+<Warning>
+  Minecraft display names can change. If a player changes their gamertag, you must update the whitelist to use their new name.
+</Warning>
+
+---
+
+## Non-whitelisted player message
+
+Players who are not on the whitelist receive this disconnect message:
+
+```
+You are not whitelisted on this server
+```
+
+This message is hard-coded in the application and is not currently overridable via the language file.
+
+---
+
+## Docker usage
+
+Mount your whitelist file into the container and reference its container path:
+
+```yaml
+services:
+  bedrockconnect:
+    image: pugmatt/bedrock-connect
+    volumes:
+      - ./whitelist.txt:/whitelist.txt
+    environment:
+      BC_WHITELIST: /whitelist.txt
+```
+
+The whitelist is read once at startup. Restart the container after editing the file for changes to take effect.

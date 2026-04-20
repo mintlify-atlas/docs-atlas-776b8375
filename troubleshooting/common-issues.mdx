@@ -1,0 +1,169 @@
+---
+title: "Troubleshoot common BedrockConnect connection issues"
+description: "Fix common problems connecting to BedrockConnect on Xbox, Switch, and PlayStation. Covers DNS issues, server list not appearing, and transfer failures."
+---
+
+BedrockConnect works through DNS redirection and a custom server-list interface, which means most issues fall into a handful of predictable categories: wrong DNS settings, a firewall blocking the right port, or a misconfigured self-hosted instance. Work through the sections below to identify and fix your problem.
+
+<AccordionGroup>
+  <Accordion title="Can't connect to featured server / BedrockConnect doesn't open">
+    The most common cause is an incorrect DNS address. Confirm the following:
+
+    - **Xbox and Nintendo Switch** — set your primary DNS to `104.238.130.180` and secondary DNS to `8.8.8.8`.
+    - **PlayStation (PS4/PS5)** — set your primary DNS to `45.55.68.52` and secondary DNS to `8.8.8.8`. Using the Xbox/Switch address on PlayStation will not work.
+
+    Next, make sure you are joining a **redirect-compatible featured server** from the Servers tab. Only these specific server entries have their domains intercepted by the DNS redirect:
+
+    - Mineville
+    - Lifeboat
+    - Enchanted
+    - Galaxite
+    - The Hive
+
+    If DNS is correct and you are joining a compatible server but it still does not open, try power cycling your console and router to flush any cached DNS entries.
+  </Accordion>
+
+  <Accordion title="PlayStation DNS method not working">
+    PlayStation consoles use a separate public instance with a different IP address than Xbox and Switch.
+
+    <Warning>
+      Do **not** use `104.238.130.180` on PlayStation. Use `45.55.68.52` as the primary DNS instead.
+    </Warning>
+
+    The steps to enter a custom DNS differ between PS4 and PS5:
+
+    **PS5:**
+    1. Go to **Settings → Network → Settings → Set up internet connection**.
+    2. Open **Advanced Settings** and set **DNS settings** to **Manual**.
+    3. Enter `45.55.68.52` as primary and `8.8.8.8` as secondary, then select **Ok**.
+
+    **PS4:**
+    1. Go to **Settings → Network → Set up internet connection**.
+    2. Choose your connection type, then select **Custom** when asked how to set up the connection.
+    3. Select your network, then choose **Automatic** for IP address settings and **Do not specify** for DHCP host name.
+    4. On the DNS settings screen, select **Manual** and enter `45.55.68.52` as primary and `8.8.8.8` as secondary.
+    5. Select **Automatic** for MTU and **Do not use** for proxy server, then test the connection.
+  </Accordion>
+
+  <Accordion title="Server list appears but can't connect to my server">
+    BedrockConnect successfully loaded, but the transfer to your target server failed. Check the following:
+
+    - Verify that the server IP and port you entered are correct.
+    - Confirm the target server is running and reachable from the internet (not just your local network).
+    - Make sure **UDP port 19132** (or whichever port your server uses) is open on the target server's firewall and any router NAT rules.
+
+    <Tip>
+      You can test reachability from another machine with a Minecraft client or by using a Bedrock server ping tool.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Add Friend method not available">
+    The public bots that powered the Add Friend method have been **taken offline** due to scalability and security concerns. There is currently no estimated timeline for them returning.
+
+    <Note>
+      You can still use this method by self-hosting. Follow the [Standalone install instructions from MCXboxBroadcast](https://github.com/MCXboxBroadcast/Broadcaster?tab=readme-ov-file#standalone) and set the target server address in the config to your BedrockConnect instance IP.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Self-hosted: Port already in use error">
+    When BedrockConnect fails to bind to its port you will see a log message similar to:
+
+    ```
+    Error binding to address (Is port 19132 already in use?)
+    ```
+
+    Another process on the host is already listening on UDP 19132. You have two options:
+
+    **Option 1 — Identify and stop the conflicting process:**
+
+    ```bash
+    netstat -ulnp | grep 19132
+    ```
+
+    **Option 2 — Change BedrockConnect's port:**
+
+    Pass a different port using the `port` configuration option:
+
+    ```
+    java -jar BedrockConnect-1.0-SNAPSHOT.jar port=19133
+    ```
+
+    <Note>
+      If you change the port, update your DNS records and any firewall rules to match the new port.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Self-hosted: DNS not redirecting to my instance">
+    If your bind9 DNS server is running but consoles are still reaching the real featured servers, check the following:
+
+    1. **Verify zone configuration** — the zone file must have records for all featured server domains (e.g. `hivebedrock.network`, `mco.lbsg.net`, `play.galaxite.net`) pointing to your BedrockConnect IP.
+
+    2. **Confirm bind9 is running:**
+
+       ```bash
+       systemctl status bind9
+       ```
+
+    3. **Test DNS resolution from another machine:**
+
+       ```bash
+       nslookup hivebedrock.network <your-dns-ip>
+       ```
+
+       The returned address should be your BedrockConnect server's IP, not the real Hive address.
+
+    <Tip>
+      A docker-compose file bundling BedrockConnect and bind9 together is available in the [docker folder of the repository](https://github.com/Pugmatt/BedrockConnect/tree/master/docker).
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Self-hosted: bind9 can't bind to port 53">
+    On many Linux distributions another service holds port 53 at startup, preventing bind9 from starting. The usual culprits are `resolvconf` and `systemd-resolved`.
+
+    **Stop and disable resolvconf:**
+
+    ```bash
+    sudo systemctl stop resolvconf.service
+    sudo systemctl disable resolvconf.service
+    ```
+
+    **On Ubuntu 18.04 and later, also stop systemd-resolved:**
+
+    ```bash
+    sudo systemctl stop systemd-resolved
+    ```
+
+    After stopping these services, restart bind9:
+
+    ```bash
+    sudo systemctl start bind9
+    ```
+  </Accordion>
+
+  <Accordion title="Players can't save servers (no database configured)">
+    Without a database configured, BedrockConnect stores each player's saved server list in local files in the working directory. This works out of the box, but there are a couple of things to check if saves are not persisting:
+
+    - Confirm the user running the BedrockConnect process has **read and write permission** to the working directory.
+    - If running in Docker, make sure the data directory is mounted as a volume so files survive container restarts.
+
+    <Note>
+      To share player data across multiple BedrockConnect instances or to persist data more robustly, configure a MySQL, MariaDB, or PostgreSQL database using the `db_type`, `db_host`, `db_db`, `db_user`, and `db_pass` settings.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Enabling debug mode for verbose logs">
+    If you are unable to identify the problem from normal output, enable debug mode to get detailed startup and runtime logging:
+
+    ```
+    java -jar BedrockConnect-1.0-SNAPSHOT.jar debug=true
+    ```
+
+    Debug mode logs:
+
+    - Java version and OS information at startup
+    - The full resolved configuration (database credentials are automatically **redacted** in the output)
+    - Which configuration sources were used: startup args, config file, or environment variables
+
+    Share the debug output when reporting issues so maintainers have the full context.
+  </Accordion>
+</AccordionGroup>

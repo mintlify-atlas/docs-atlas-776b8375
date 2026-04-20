@@ -1,0 +1,90 @@
+---
+title: "Set up DNS redirection for BedrockConnect"
+description: "Configure bind9 or another DNS server to redirect Minecraft's featured server domains to your BedrockConnect instance."
+---
+
+Minecraft: Bedrock Edition on consoles only displays a fixed set of "featured servers" in the **Servers** tab — it does not allow players to enter an arbitrary IP address. BedrockConnect works around this by intercepting the DNS lookups for those featured server domains and redirecting them to your BedrockConnect instance instead. When a player clicks a featured server, they connect to BedrockConnect rather than the original server.
+
+## Domains to redirect
+
+The following domains correspond to featured servers in Bedrock Edition. Your DNS server must resolve all of them to the IP address of your BedrockConnect instance:
+
+| Domain | Featured server |
+| --- | --- |
+| `hivebedrock.network` | The Hive |
+| `play.inpvp.net` | Mineville |
+| `mco.lbsg.net` | Lifeboat |
+| `play.lbsg.net` | Lifeboat (alternate) |
+| `mco.cubecraft.net` | CubeCraft |
+| `play.galaxite.net` | Galaxite |
+| `play.enchanted.gg` | Enchanted |
+
+<Note>
+  You do not need to redirect every domain — redirecting any one of them is sufficient for a player to reach BedrockConnect. Redirecting all of them gives players more featured server entries to choose from.
+</Note>
+
+## Automated setup with bind9
+
+The repository includes an `install-bind.sh` script that installs and configures bind9 with the correct zone files automatically.
+
+<Steps>
+  <Step title="Check OS compatibility">
+    The script supports the following Linux distributions:
+
+    - Ubuntu 18+
+    - CentOS 7+
+    - Arch Linux
+    - Debian
+
+    Verify your system is running one of these before proceeding.
+  </Step>
+
+  <Step title="Run the install script">
+    Run the script as root, passing your BedrockConnect server IP as the first argument. The second argument sets the name server IP (defaults to the same value as the first):
+
+    ```bash
+    sudo scripts/install-bind.sh [BCIP] [NSIP]
+    ```
+
+    For example, if your BedrockConnect server is at `192.168.1.100`:
+
+    ```bash
+    sudo scripts/install-bind.sh 192.168.1.100
+    ```
+
+    The script installs bind9 (or the equivalent `named` package for your distro), writes zone files for each domain, and reloads the service.
+  </Step>
+
+  <Step title="Point consoles at your DNS server">
+    On each console, open the network or internet settings and set the **primary DNS** to the IP address of the machine running your bind9 server. You can use `8.8.8.8` as the secondary DNS.
+
+    Once updated, connect to any of the redirected featured servers in Minecraft to reach your BedrockConnect instance.
+  </Step>
+</Steps>
+
+## Zone file format
+
+The script creates one zone file per domain. Each file follows this structure (shown here for `hivebedrock.network`):
+
+```text db.hivebedrock.network
+@	IN	SOA	hivebedrock.network.	admin.hivebedrock.network. (
+			2014030801	; serial
+				1D	; refresh
+				1H	; retry
+				1W	; expire
+				3H )	; minimum
+@	300	NS	ns.hivebedrock.network.
+ns	300	IN	A	<NSIP>
+@	300	IN	A	<BCIP>
+geo	300	IN	A	<BCIP>
+```
+
+The `BCIP` and `NSIP` placeholders are filled in by the script with the IP addresses you provide.
+
+## DNS with Docker Compose
+
+If you prefer a containerized DNS setup, the `docker/docker-compose.yml` in the repository includes both a BedrockConnect container and a bind9 container. See the [Docker deployment guide](/hosting/docker) for details on configuring the `BCIP` and `NSIP` build arguments.
+
+## Using other DNS software
+
+Any DNS server software can be used in place of bind9, as long as you configure it to resolve the domains listed above to your BedrockConnect IP. The zone configuration approach shown above can be adapted to dnsmasq, PowerDNS, Unbound, or any other authoritative DNS server. Point each domain's A record at your BedrockConnect instance IP and ensure port 53 (UDP) is open on your DNS host.

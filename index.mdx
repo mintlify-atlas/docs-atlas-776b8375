@@ -1,97 +1,61 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "BedrockConnect: join any server on Xbox, Switch, PS"
+description: "BedrockConnect lets Minecraft Bedrock players on Xbox, Nintendo Switch, and PlayStation connect to any server IP — no jailbreak or sideloading required."
 ---
 
-## Setting up
+BedrockConnect is a free, open-source server that gives Minecraft: Bedrock Edition players on game consoles access to a custom server list. By intercepting traffic for featured servers via DNS, it presents an in-game UI where players can add, remove, and join any Bedrock server — including servers that consoles wouldn't otherwise support.
 
-Get your documentation site up and running in minutes.
-
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Quick setup for consoles" icon="gamepad" href="/quickstart-console">
+    Get connected on Xbox, Switch, or PlayStation in a few minutes using the public DNS method
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="How it works" icon="circle-info" href="/how-it-works">
+    Understand the DNS redirect and transfer packet approach behind BedrockConnect
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Self-host your own instance" icon="server" href="/hosting/running-the-server">
+    Run BedrockConnect on your own hardware using the JAR or Docker image
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Configuration reference" icon="sliders" href="/configuration/settings">
+    Full list of every setting available via config.yml, startup args, or environment variables
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## What BedrockConnect does
 
-Everything you need to create world-class documentation.
+Console versions of Minecraft: Bedrock Edition restrict the in-game server browser to a small list of Microsoft-approved "featured servers." BedrockConnect works around this limitation — without modifying your console — by redirecting DNS queries for those featured server domains to a BedrockConnect instance instead. Once connected, you see a server-list interface where you can enter any IP and port to join.
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
+<CardGroup cols={2}>
+  <Card title="Public instances" icon="globe" href="/instances/public-instances">
+    Use a community-hosted BedrockConnect server — no setup needed
   </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
+  <Card title="Custom server list" icon="list" href="/configuration/custom-servers">
+    Pre-populate your instance with servers players can pick from a menu
   </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
+  <Card title="DNS setup guide" icon="network-wired" href="/hosting/dns-setup">
+    Set up bind9 or another DNS server to redirect featured server domains
   </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
+  <Card title="Troubleshooting" icon="wrench" href="/troubleshooting/common-issues">
+    Fix common connection and configuration problems
   </Card>
-</Columns>
+</CardGroup>
 
-## Need inspiration?
+## Quick start
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<Steps>
+  <Step title="Change your console's DNS">
+    Set your primary DNS to a BedrockConnect instance. For Xbox and Switch, use `104.238.130.180`. For PlayStation, use `45.55.68.52`.
+  </Step>
+  <Step title="Open Minecraft and go to Servers">
+    Navigate to the **Servers** tab in Minecraft's main menu.
+  </Step>
+  <Step title="Join a redirect-compatible featured server">
+    Select one of the compatible featured servers: **Mineville**, **Lifeboat**, **Enchanted**, **Galaxite**, or **The Hive**. This opens the BedrockConnect server list.
+  </Step>
+  <Step title="Enter your server IP and connect">
+    Use the BedrockConnect UI to add your server's IP and port, then connect.
+  </Step>
+</Steps>
+
+<Note>
+  BedrockConnect is and always has been free and open-source since 2019. There is no official mobile app — any app on the Apple or Google Play store using this name is not affiliated with this project.
+</Note>

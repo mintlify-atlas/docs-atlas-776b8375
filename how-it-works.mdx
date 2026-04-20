@@ -1,0 +1,60 @@
+---
+title: "How BedrockConnect works"
+description: "BedrockConnect redirects featured server DNS queries to a custom server-list UI, then transfers players to their chosen Bedrock server."
+---
+
+BedrockConnect is a minimal Minecraft: Bedrock Edition server that presents players with an in-game server-list UI. When a player picks a server, BedrockConnect sends a transfer packet that seamlessly moves them off BedrockConnect and onto the destination server — all without leaving the game. The challenge for console players is *getting to* BedrockConnect in the first place, which is where the two connection methods come in.
+
+## Why consoles need BedrockConnect
+
+Minecraft: Bedrock Edition on Xbox, Nintendo Switch, and PlayStation restricts the in-game **Servers** tab to a curated list of Microsoft-approved "featured servers." Players cannot enter a custom IP from this menu. BedrockConnect solves this by intercepting the connection to a featured server before it reaches its real destination and routing the player to a BedrockConnect server-list UI instead.
+
+## Connection methods
+
+### DNS method
+
+The DNS method is the recommended approach. It requires no downloads — only a change to the DNS settings on your console's network connection.
+
+Minecraft's featured servers each resolve to specific domain names (for example, `mco.lbsg.net` for Lifeboat). When your console queries DNS for one of these domains, a standard DNS server returns the featured server's real IP. A BedrockConnect-aware DNS server returns the IP of a BedrockConnect instance instead.
+
+<Steps>
+  <Step title="Console queries DNS">
+    The player selects a featured server in-game. The console sends a DNS query for that server's domain, such as `geo.hivebedrock.network`.
+  </Step>
+  <Step title="DNS resolves to BedrockConnect">
+    The custom DNS server intercepts the query and returns the IP of a BedrockConnect instance (`104.238.130.180` for Xbox and Switch, `45.55.68.52` for PlayStation) rather than the real featured server IP.
+  </Step>
+  <Step title="Player connects to BedrockConnect">
+    Minecraft connects to the BedrockConnect server. The player's login is handled using the [CloudburstMC Bedrock Protocol Library](https://github.com/NukkitX/Protocol), which implements the full Minecraft: Bedrock Edition protocol.
+  </Step>
+  <Step title="Server-list UI is displayed">
+    Once spawned, BedrockConnect immediately presents the player with a modal form — the server-list interface. This UI shows any previously saved servers, custom servers configured by the instance operator, and featured server shortcuts. The player can also use **Direct Connect** to enter any IP and port.
+  </Step>
+  <Step title="Transfer packet sends the player to their destination">
+    When the player selects a server or submits an IP, BedrockConnect calls `TransferPacket` with the target address and port. The Bedrock client handles this packet natively: it disconnects from BedrockConnect and reconnects directly to the destination server — from the player's perspective, it feels like a seamless server switch.
+  </Step>
+</Steps>
+
+### Add Friend method
+
+The Add Friend method uses the **Join Game** button in Minecraft's Friends menu rather than the Servers tab. It is powered by [MCXboxBroadcast](https://github.com/MCXboxBroadcast/Broadcaster), which advertises a BedrockConnect instance as an active Xbox Live friend session. When the player clicks **Join**, Minecraft connects to the BedrockConnect server and the same server-list UI flow begins.
+
+<Info>
+  The public bots for the Add Friend method are currently offline. This method requires running your own MCXboxBroadcast instance pointed at a BedrockConnect server.
+</Info>
+
+## What happens after a player connects
+
+Once a player is connected to BedrockConnect and the UI loads, they can:
+
+- **Direct Connect** — enter any IP and port to join immediately
+- **Add a server** — save an IP and port to their personal server list for future sessions
+- **Edit or remove saved servers** — manage their stored entries
+- **Join a custom server** — select from servers pre-configured by the instance operator
+- **Exit** — disconnect from BedrockConnect
+
+When the player submits a destination, `PacketHandler.transfer()` constructs a `TransferPacket` with the target IP and port and sends it immediately. If the input was a hostname rather than a raw IP, BedrockConnect resolves it via `InetAddress.getByName()` before populating the packet, depending on the instance's configuration.
+
+## Underlying protocol library
+
+BedrockConnect is built on the [NukkitX/CloudburstMC Bedrock Protocol Library](https://github.com/NukkitX/Protocol). This library handles the full Bedrock Edition network protocol — RakNet session management, packet encoding/decoding, login chain validation, encryption negotiation, and compression. BedrockConnect implements only the subset of protocol behavior needed to display a UI form and send a transfer packet; it does not run a full game world.

@@ -1,0 +1,74 @@
+{
+  "projectType": "infrastructure",
+  "projectName": "BedrockConnect",
+  "projectDescription": "A self-hosted Java server that lets Xbox, Switch, and PlayStation players join any Minecraft Bedrock Edition server IP using DNS redirection.",
+  "theme": "aspen",
+  "primaryColor": "#94cb04",
+  "lightColor": "#545454",
+  "darkColor": null,
+  "navigation": {
+    "groups": [
+      {
+        "group": "Get Started",
+        "pages": [
+          "introduction",
+          "quickstart-console",
+          "how-it-works"
+        ]
+      },
+      {
+        "group": "Self-Hosting",
+        "pages": [
+          "hosting/running-the-server",
+          "hosting/docker",
+          "hosting/dns-setup",
+          "hosting/linux-setup"
+        ]
+      },
+      {
+        "group": "Configuration",
+        "pages": [
+          "configuration/settings",
+          "configuration/custom-servers",
+          "configuration/language",
+          "configuration/whitelist",
+          "configuration/database"
+        ]
+      },
+      {
+        "group": "Community & Instances",
+        "pages": [
+          "instances/public-instances",
+          "instances/contributing"
+        ]
+      },
+      {
+        "group": "Troubleshooting",
+        "pages": [
+          "troubleshooting/common-issues",
+          "troubleshooting/faq"
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "DNS-based redirect for featured Minecraft servers on Xbox, Switch, and PlayStation",
+    "In-game server list UI for adding and managing custom server entries",
+    "Supports running as a standalone JAR or Docker container",
+    "Configurable via startup args, config.yml file, or environment variables",
+    "Optional database backend (MySQL, MariaDB, PostgreSQL) for persistent player data",
+    "Custom server list via JSON file with server groups support",
+    "Player whitelist support",
+    "Localization via custom language.json file",
+    "MOTD (message of the day) support with cooldown options",
+    "bind9 DNS integration scripts for Linux and Docker"
+  ],
+  "publicApiSurface": [
+    "java -jar BedrockConnect-1.0-SNAPSHOT.jar [key=value ...]",
+    "config.yml (port, bind_ip, server_limit, db_type, db_host, db_db, db_user, db_pass, custom_servers, whitelist, language, motd, online_mode, kick_inactive, user_servers, featured_servers, fetch_featured_ips, debug, packet_limit, global_packet_limit)",
+    "Environment variables: BC_<setting>=<value>",
+    "custom_servers JSON format: [{name, iconUrl, address, port}] or [{name, iconUrl, content: [...]}]",
+    "Docker image: pugmatt/bedrock-connect",
+    "Console commands: stop, end, reload motd [file]"
+  ]
+}

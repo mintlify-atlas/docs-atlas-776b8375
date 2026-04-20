@@ -1,0 +1,190 @@
+---
+title: "Get started with BedrockConnect on your console"
+description: "Step-by-step setup for Xbox, Nintendo Switch, and PlayStation using the DNS method or Add Friend method."
+---
+
+BedrockConnect gives you access to any Minecraft: Bedrock Edition server from your game console in just a few minutes. The fastest way to get connected is the DNS method — no downloads or account changes required. Alternatively, the Add Friend method lets you join through the Friends menu using a separate companion tool.
+
+## DNS method
+
+The DNS method redirects traffic for featured server domains to a BedrockConnect instance. When you join a compatible featured server, you land on the BedrockConnect server-list UI instead of the actual featured server. From there you can enter any IP and port to transfer to your destination.
+
+<Tabs>
+  <Tab title="Nintendo Switch">
+    <Steps>
+      <Step title="Open internet settings">
+        From the Switch home screen, go to **System Settings** → **Internet** → **Internet Settings**.
+      </Step>
+      <Step title="Edit your connection">
+        Select your current Wi-Fi connection, then choose **Change Settings**.
+      </Step>
+      <Step title="Set DNS to manual">
+        Scroll down to **DNS Settings** and change it from **Automatic** to **Manual**.
+      </Step>
+      <Step title="Enter the BedrockConnect DNS values">
+        Set the following values:
+
+        | Field | Value |
+        |---|---|
+        | Primary DNS | `104.238.130.180` |
+        | Secondary DNS | `8.8.8.8` |
+
+        Save the settings and reconnect to your network.
+      </Step>
+      <Step title="Open Minecraft and go to Servers">
+        Launch Minecraft: Bedrock Edition and navigate to the **Servers** tab in the main menu.
+      </Step>
+      <Step title="Join a redirect-compatible featured server">
+        Select any of the following featured servers to open BedrockConnect:
+
+        - Mineville
+        - Lifeboat
+        - Enchanted
+        - Galaxite
+        - The Hive
+      </Step>
+      <Step title="Enter your server details">
+        Once the BedrockConnect server-list UI loads, use **Direct Connect** to enter an IP and port, or add the server to your list for later.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Xbox">
+    <Steps>
+      <Step title="Open network settings">
+        From the Xbox home screen, press the **Xbox button**, go to **Profile & system** → **Settings** → **General** → **Network settings**.
+      </Step>
+      <Step title="Go to advanced settings">
+        Select **Advanced settings**, then choose **DNS settings** → **Manual**.
+      </Step>
+      <Step title="Enter the BedrockConnect DNS values">
+        Set the following values:
+
+        | Field | Value |
+        |---|---|
+        | Primary DNS | `104.238.130.180` |
+        | Secondary DNS | `8.8.8.8` |
+
+        Confirm and save.
+      </Step>
+      <Step title="Open Minecraft and go to Servers">
+        Launch Minecraft: Bedrock Edition and navigate to the **Servers** tab in the main menu.
+      </Step>
+      <Step title="Join a redirect-compatible featured server">
+        Select any of the following featured servers to open BedrockConnect:
+
+        - Mineville
+        - Lifeboat
+        - Enchanted
+        - Galaxite
+        - The Hive
+      </Step>
+      <Step title="Enter your server details">
+        Use the BedrockConnect server-list UI to enter your server's IP and port, then connect.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="PlayStation">
+    PlayStation uses a separate DNS address from Xbox and Switch. Expand the section for your console model below.
+
+    <Accordion title="PS5 instructions">
+      <Steps>
+        <Step title="Open network settings">
+          From the PS5 home screen, go to **Settings** → **Network**.
+        </Step>
+        <Step title="Set up internet connection">
+          Select **Settings** → **Set up internet connection**.
+        </Step>
+        <Step title="Set DNS to manual">
+          In **Advanced Settings**, set **DNS settings** to **Manual**.
+        </Step>
+        <Step title="Enter the BedrockConnect DNS values">
+          Set the following values:
+
+          | Field | Value |
+          |---|---|
+          | Primary DNS | `45.55.68.52` |
+          | Secondary DNS | `8.8.8.8` |
+
+          Select **OK** and wait for the connection test to complete.
+        </Step>
+        <Step title="Open Minecraft and join a featured server">
+          Launch Minecraft: Bedrock Edition, go to the **Servers** tab, and join any of these featured servers:
+
+          - Mineville
+          - Lifeboat
+          - Enchanted
+          - Galaxite
+          - The Hive
+        </Step>
+        <Step title="Enter your server details">
+          Use the BedrockConnect UI to enter your server's IP and port and connect.
+        </Step>
+      </Steps>
+    </Accordion>
+
+    <Accordion title="PS4 instructions">
+      <Steps>
+        <Step title="Open network settings">
+          From the PS4 home screen, go to **Settings** → **Network**.
+        </Step>
+        <Step title="Set up internet connection">
+          Select **Set up internet connection**, then choose your connection type (Wi-Fi or LAN cable).
+        </Step>
+        <Step title="Choose custom setup">
+          When prompted for how to set up the connection, select **Custom**.
+        </Step>
+        <Step title="Work through the setup screens">
+          Proceed through the screens with these selections:
+
+          - **IP address settings**: Automatic
+          - **DHCP host name**: Do not specify
+          - **DNS settings**: Manual
+        </Step>
+        <Step title="Enter the BedrockConnect DNS values">
+          Set the following values:
+
+          | Field | Value |
+          |---|---|
+          | Primary DNS | `45.55.68.52` |
+          | Secondary DNS | `8.8.8.8` |
+
+          Select **Next**.
+        </Step>
+        <Step title="Complete the remaining screens">
+          - **MTU settings**: Automatic
+          - **Proxy server**: Do not use
+
+          Run the connection test to confirm everything works.
+        </Step>
+        <Step title="Open Minecraft and join a featured server">
+          Launch Minecraft: Bedrock Edition, go to the **Servers** tab, and join any of these featured servers:
+
+          - Mineville
+          - Lifeboat
+          - Enchanted
+          - Galaxite
+          - The Hive
+        </Step>
+        <Step title="Enter your server details">
+          Use the BedrockConnect UI to enter your server's IP and port and connect.
+        </Step>
+      </Steps>
+    </Accordion>
+  </Tab>
+</Tabs>
+
+## Add Friend method
+
+The Add Friend method uses the **Join Game** button in Minecraft's Friends menu to redirect you to a BedrockConnect instance. It relies on [MCXboxBroadcast](https://github.com/MCXboxBroadcast/Broadcaster) — a separate tool that advertises a BedrockConnect server as an Xbox Live friend session so you can join through the Friends tab.
+
+<Warning>
+  The public BedrockConnect bots for the Add Friend method are currently offline due to scalability and security concerns. To use this method, you need to run your own MCXboxBroadcast instance pointing at a BedrockConnect server.
+</Warning>
+
+To set this up yourself, follow the [Standalone install instructions in the MCXboxBroadcast repo](https://github.com/MCXboxBroadcast/Broadcaster?tab=readme-ov-file#standalone) and set the target server address in `config.yml` to your BedrockConnect instance IP (for example, `104.238.130.180` for the main public instance).
+
+## Troubleshooting
+
+<Note>
+  If you're having trouble connecting after following these steps, see the [troubleshooting guide](/troubleshooting/common-issues) for solutions to common DNS and connection issues.
+</Note>

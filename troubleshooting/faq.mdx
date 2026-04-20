@@ -1,0 +1,101 @@
+---
+title: "BedrockConnect frequently asked questions and answers"
+description: "Answers to common questions about BedrockConnect: console compatibility, server limits, database sharing, official apps, and project history."
+---
+
+BedrockConnect has been running since 2019 and the same questions come up regularly. The answers below cover eligibility, limits, and the details that are easy to miss when getting started.
+
+<AccordionGroup>
+  <Accordion title="Is BedrockConnect free?">
+    Yes. BedrockConnect is and has always been free and open-source. The project was first released in 2019 and is licensed under the **GPL-3.0** license. The source code is available on [GitHub](https://github.com/Pugmatt/BedrockConnect).
+
+    <Note>
+      The public community-hosted instances are also free to use. If you find the project useful, the maintainer accepts sponsorships via [GitHub Sponsors](https://github.com/sponsors/Pugmatt) and [Patreon](https://www.patreon.com/Pugmatt) to help keep the servers running.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Is there an official mobile app?">
+    No. BedrockConnect does **not** have an official app on the Apple App Store or Google Play Store. Any app using the BedrockConnect name is not affiliated with this project and is not endorsed by the maintainers.
+
+    <Warning>
+      Only use BedrockConnect resources found on the official [GitHub repository](https://github.com/Pugmatt/BedrockConnect).
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Which consoles are supported?">
+    BedrockConnect supports all four console platforms that run Minecraft: Bedrock Edition:
+
+    - Xbox One and Xbox Series X/S
+    - Nintendo Switch
+    - PlayStation 4
+    - PlayStation 5
+
+    Note that PlayStation uses a different public DNS address (`45.55.68.52`) than Xbox and Switch (`104.238.130.180`).
+  </Accordion>
+
+  <Accordion title="Do I need to jailbreak or modify my console?">
+    No. BedrockConnect works entirely through the **DNS settings** built into every console's network configuration. No system modifications, custom firmware, or jailbreaking are required or involved.
+  </Accordion>
+
+  <Accordion title="Can I use BedrockConnect on PC or mobile?">
+    BedrockConnect is designed specifically for consoles. PC and mobile players can already add custom servers directly from the in-game server list and do not need BedrockConnect to connect to third-party servers.
+  </Accordion>
+
+  <Accordion title='What is a "redirect-compatible featured server"?'>
+    Featured servers are the official partner servers shown in the **Servers** tab of Minecraft on consoles. The DNS method works by intercepting the domain lookups for a specific subset of these servers and pointing them to your BedrockConnect instance instead.
+
+    The following featured servers are redirect-compatible:
+
+    - **Mineville** (`play.inpvp.net`)
+    - **Lifeboat** (`mco.lbsg.net`)
+    - **Enchanted** (`play.enchanted.gg`)
+    - **Galaxite** (`play.galaxite.net`)
+    - **The Hive** (`hivebedrock.network`)
+
+    You must tap one of these entries in-game to trigger the redirect. Joining any other server entry will connect you to the real server.
+  </Accordion>
+
+  <Accordion title="Do public instances share player data?">
+    No. Each BedrockConnect instance maintains its own independent player database. If you use one instance and then switch to a different one, your saved server list will not carry over — you will need to re-add your servers on the new instance.
+  </Accordion>
+
+  <Accordion title="How many servers can a player save?">
+    The default limit is **100 servers** per player. Instance operators can adjust this with the `server_limit` configuration option.
+  </Accordion>
+
+  <Accordion title="Does BedrockConnect support Java Edition?">
+    No. BedrockConnect is built for **Minecraft: Bedrock Edition** only. Java Edition has native support for custom server addresses in its multiplayer menu and does not need a tool like BedrockConnect.
+  </Accordion>
+
+  <Accordion title='What is the "Add Friend" method?'>
+    The Add Friend method is an alternative to the DNS method. Instead of changing DNS settings, it uses the **Friends list → Join Game** feature. A bot powered by [MCXboxBroadcast](https://github.com/rtm516/MCXboxBroadcast) broadcasts a BedrockConnect instance as a joinable game, and players connect by clicking Join Game on the bot's profile.
+
+    <Warning>
+      The public bots for this method are currently **offline** due to scalability and security concerns. There is no set timeline for their return. You can still use the Add Friend method by self-hosting MCXboxBroadcast pointed at your own BedrockConnect instance.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Can I host my own instance?">
+    Yes. Self-hosting gives you full control over the server list and player data. The requirements are minimal:
+
+    - **Java 8 or higher**
+    - The BedrockConnect JAR from the [releases page](https://github.com/Pugmatt/BedrockConnect/releases), or Docker using the `pugmatt/bedrock-connect` image
+    - Optionally, a DNS server (such as bind9) if you want to support the DNS method for consoles outside your local network
+
+    See the Self-Hosting section of the documentation for full setup instructions.
+  </Accordion>
+
+  <Accordion title="What database types are supported?">
+    BedrockConnect supports three relational database backends:
+
+    - **MySQL**
+    - **MariaDB**
+    - **PostgreSQL**
+
+    Configure the database using the `db_type`, `db_host`, `db_db`, `db_user`, and `db_pass` settings. If no database is configured (`db_type=none`, which is the default), player server lists are stored in local files on the host machine.
+
+    <Note>
+      The older `mysql_*` settings (`mysql_host`, `mysql_user`, etc.) still work for backwards compatibility but are deprecated. Migrate to the `db_*` equivalents for any new setup.
+    </Note>
+  </Accordion>
+</AccordionGroup>

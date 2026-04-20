@@ -1,0 +1,107 @@
+---
+title: "Configure a database backend for BedrockConnect data"
+description: "Store player server lists in MySQL, MariaDB, or PostgreSQL instead of local files. Configure connection settings and choose your database type."
+---
+
+By default, BedrockConnect stores each player's saved server list as a local file on disk — no database is required to run a working instance. A relational database becomes useful when you want external access to player data, long-term persistence independent of the server's filesystem, or a path toward sharing data across multiple instances in the future.
+
+<Note>
+  BedrockConnect instances do not currently synchronize state with each other automatically. If you run multiple load-balanced instances, each instance maintains its own connection to the database, but shared player data across instances is not handled out of the box. This is primarily useful for persistence on a single instance.
+</Note>
+
+## Supported database types
+
+| Value      | Database              |
+| ---------- | --------------------- |
+| `mysql`    | MySQL                 |
+| `mariadb`  | MariaDB               |
+| `postgres` | PostgreSQL            |
+| `none`     | Local files (default) |
+
+---
+
+## Configuration
+
+Set `db_type` to your chosen database and supply the connection details with the remaining `db_*` settings.
+
+<Tabs>
+  <Tab title="MySQL">
+    ```yaml
+    db_type: mysql
+    db_host: localhost
+    db_db: bedrock-connect
+    db_user: root
+    db_pass: yourpassword
+    auto_reconnect: false
+    ```
+  </Tab>
+  <Tab title="MariaDB">
+    ```yaml
+    db_type: mariadb
+    db_host: localhost
+    db_db: bedrock-connect
+    db_user: root
+    db_pass: yourpassword
+    auto_reconnect: false
+    ```
+  </Tab>
+  <Tab title="PostgreSQL">
+    ```yaml
+    db_type: postgres
+    db_host: localhost
+    db_db: bedrock-connect
+    db_user: root
+    db_pass: yourpassword
+    auto_reconnect: false
+    ```
+  </Tab>
+</Tabs>
+
+The database named in `db_db` must already exist on the server before you start BedrockConnect. BedrockConnect will create its own tables inside that database on first run.
+
+---
+
+## Settings reference
+
+<ParamField path="db_type" type="string" default="none">
+  Selects the database backend. Use `none` (or omit the setting entirely) for local file storage. Valid values: `none`, `mysql`, `mariadb`, `postgres`. Environment variable: `BC_DB_TYPE`.
+</ParamField>
+
+<ParamField path="db_host" type="string" default="localhost">
+  Hostname or IP address of the database server. Environment variable: `BC_DB_HOST`.
+</ParamField>
+
+<ParamField path="db_db" type="string" default="bedrock-connect">
+  The database name BedrockConnect connects to. Must exist before starting the server. Environment variable: `BC_DB_DB`.
+</ParamField>
+
+<ParamField path="db_user" type="string" default="root">
+  Database login username. Environment variable: `BC_DB_USER`.
+</ParamField>
+
+<ParamField path="db_pass" type="string" default='""'>
+  Database login password. Leave empty for no password. Environment variable: `BC_DB_PASS`.
+</ParamField>
+
+<ParamField path="auto_reconnect" type="boolean" default="false">
+  Appends `autoReconnect=true` to the JDBC connection string, instructing the driver to automatically recover from a dropped connection. Enable this if your database server closes idle connections on a timeout. Environment variable: `BC_AUTO_RECONNECT`.
+</ParamField>
+
+---
+
+## Legacy MySQL settings
+
+<Warning>
+  The `mysql_host`, `mysql_db`, `mysql_user`, and `mysql_pass` arguments are deprecated. Using any of them automatically sets `db_type` to `mysql`, but they may be removed in a future release. Migrate to the `db_*` settings as soon as possible.
+</Warning>
+
+If your existing configuration uses legacy settings, replace them as follows:
+
+| Legacy argument | Replacement    |
+| --------------- | -------------- |
+| `mysql_host`    | `db_host`      |
+| `mysql_db`      | `db_db`        |
+| `mysql_user`    | `db_user`      |
+| `mysql_pass`    | `db_pass`      |
+
+Add `db_type: mysql` explicitly, then remove the `mysql_*` lines.

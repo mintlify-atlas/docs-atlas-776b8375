@@ -1,0 +1,34 @@
+---
+title: "Public BedrockConnect instances"
+description: "Community-hosted BedrockConnect servers available for free public use. Includes DNS-enabled instances across multiple regions worldwide."
+---
+
+Several community members host public BedrockConnect instances you can use without running your own server. Each instance runs independently, so you can connect to any of them using the DNS method or direct IP depending on what the instance supports.
+
+<Note>
+  Each instance maintains its own separate player database. If you save servers on one instance and later connect to a different one, you will need to add your servers again.
+</Note>
+
+## Instance list
+
+You can check the live status of public instances at [bcstatus.xyz/status/bedrock](https://bcstatus.xyz/status/bedrock).
+
+| IP Address | DNS method | Location | Maintainer | Notes |
+| --- | --- | --- | --- | --- |
+| `104.238.130.180` | Yes | US | [Pugmatt](https://github.com/Pugmatt) | Main instance, load balanced across multiple servers. For PS4/PS5 DNS issues, use `45.55.68.52` as your primary DNS instead. |
+| `134.255.231.119` | Yes | Germany | [ZAP-Hosting](https://github.com/zaphosting) | |
+| `185.169.180.190` | Yes | Turkey | [hasankayra04](https://github.com/hasankayra04) | Uses NextDNS. [Status page](https://status.hasankayra04.com) (listed as "Dns Resolver" & "BedrockConnect"). |
+| `5.161.83.73` | No | US (Virginia) | [Cybrancee](https://github.com/cybrancee) | |
+| `213.171.211.142` | No | UK | [kmpoppe](https://github.com/kmpoppe) | |
+| `217.160.58.93` | No | Germany | [kmpoppe](https://github.com/kmpoppe) | |
+| `2.59.252.99` | No | South Korea | [Minjae](https://github.com/minj-ae) | Located in Seoul. |
+
+## DNS method vs. direct connection
+
+Instances marked **Yes** for DNS method support the recommended setup: you change your console's DNS settings to the instance IP, then connect through a featured server in-game. This works on Nintendo Switch, Xbox, and PlayStation without any additional software.
+
+Instances marked **No** do not run a DNS server. You can still reach them, but you'll need an alternative join method such as the [Add Friend method](https://github.com/MCXboxBroadcast/Broadcaster?tab=readme-ov-file#standalone) or a LAN connection if your console is on the same network.
+
+## PlayStation note
+
+The main instance at `104.238.130.180` works for Switch and Xbox. For **PS4 and PS5**, use `45.55.68.52` as your primary DNS address instead. This is a dedicated entry point for the same main instance optimized for PlayStation.

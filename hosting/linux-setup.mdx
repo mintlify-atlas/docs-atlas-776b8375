@@ -1,0 +1,150 @@
+---
+title: "Full BedrockConnect setup on Linux"
+description: "Complete guide to installing BedrockConnect and bind9 DNS on a Linux server, including systemd service setup for automatic startup."
+---
+
+This guide covers a complete end-to-end BedrockConnect installation on a Linux server: installing Java, downloading the JAR, configuring bind9 for DNS redirection, and running BedrockConnect as a systemd service so it starts automatically on boot. Use this guide when you want a production-ready setup without Docker.
+
+## Port requirements
+
+Open the following ports on your server's firewall before you begin:
+
+| Port | Protocol | Purpose |
+| --- | --- | --- |
+| `19132` | UDP | BedrockConnect server — Minecraft client connections |
+| `53` | UDP | DNS server — console DNS queries |
+
+## Full installation
+
+<Steps>
+  <Step title="Install Java">
+    BedrockConnect requires Java 8 or higher. Install it using your distribution's package manager:
+
+    ```bash
+    # Ubuntu / Debian
+    sudo apt install -y default-jre
+
+    # CentOS / RHEL
+    sudo yum install -y java-11-openjdk
+
+    # Arch
+    sudo pacman -S jre-openjdk
+    ```
+
+    Verify the installation:
+
+    ```bash
+    java -version
+    ```
+  </Step>
+
+  <Step title="Download the BedrockConnect JAR">
+    Download the latest release from [github.com/Pugmatt/BedrockConnect/releases](https://github.com/Pugmatt/BedrockConnect/releases):
+
+    ```bash
+    curl -L -o BedrockConnect-1.0-SNAPSHOT.jar \
+      https://github.com/Pugmatt/BedrockConnect/releases/latest/download/BedrockConnect-1.0-SNAPSHOT.jar
+    ```
+
+    You can also use the `install-service.sh` script (see step 4 below) which downloads the JAR automatically.
+  </Step>
+
+  <Step title="Configure DNS with bind9">
+    Use the `install-bind.sh` script from the repository to install and configure bind9. Run it as root, passing your server's IP address:
+
+    ```bash
+    sudo scripts/install-bind.sh <YOUR_SERVER_IP>
+    ```
+
+    The script installs bind9, creates zone files for all Minecraft featured server domains, and reloads the DNS service. Supported distributions are Ubuntu 18+, CentOS 7+, Arch, and Debian. Note that `install-service.sh` (the next step) only supports Ubuntu and CentOS.
+
+    For more detail on what the script configures, see the [DNS setup guide](/hosting/dns-setup).
+
+    <Tip>
+      If you want to run bind9 in a Docker container instead of installing it on the host, use the `docker-install-bind.sh` script. It accepts the same `[BCIP] [NSIP]` arguments as `install-bind.sh` but configures a Docker-based bind9 deployment:
+
+      ```bash
+      sudo scripts/docker-install-bind.sh <YOUR_SERVER_IP>
+      ```
+    </Tip>
+  </Step>
+
+  <Step title="Install BedrockConnect as a systemd service">
+    The repository includes an `install-service.sh` script that automates the service setup. Run it as root from the repository root:
+
+    ```bash
+    sudo scripts/install-service.sh
+    ```
+
+    The script (supports **Ubuntu** and **CentOS** only):
+    1. Installs `curl` and `jq` if not already present
+    2. Creates a dedicated `mcbc` system user with a home directory at `/home/mcbc`
+    3. Downloads the latest BedrockConnect JAR to `/home/mcbc/`
+    4. Copies the `bedrock_connect.service` unit file to `/etc/systemd/system/`
+    5. Runs `systemctl daemon-reload`, enables, and starts the service
+
+    The service unit file looks like this:
+
+    ```ini bedrock_connect.service
+    [Unit]
+    Description=Bedrock Connect
+    After=syslog.target
+    After=network.target
+
+    [Service]
+    RestartSec=2s
+    Type=simple
+    User=mcbc
+    Group=mcbc
+    WorkingDirectory=/home/mcbc
+    ExecStart=/usr/bin/java -jar BedrockConnect-1.0-SNAPSHOT.jar
+    Restart=always
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+    The service runs as the `mcbc` user, restarts automatically on failure, and starts on boot.
+
+    <Note>
+      If you intend to use a MySQL, MariaDB, or PostgreSQL database for player data, uncomment the `Requires=mysql.service` line in the unit file before installing so the service waits for the database to be ready.
+    </Note>
+  </Step>
+
+  <Step title="Verify the service is running">
+    Check the service status:
+
+    ```bash
+    sudo systemctl status bedrock_connect
+    ```
+
+    View live logs:
+
+    ```bash
+    sudo journalctl -u bedrock_connect -f
+    ```
+
+    You should see BedrockConnect start up and report that it is listening on port 19132.
+  </Step>
+
+  <Step title="Point consoles at your DNS server">
+    On each console, go to the network or internet settings and set the **primary DNS** to your server's IP address. Use `8.8.8.8` as the secondary DNS.
+
+    Once set, open Minecraft and join any of the redirected featured servers to connect to your BedrockConnect instance.
+  </Step>
+</Steps>
+
+## Managing the service
+
+Common systemd commands for managing the BedrockConnect service:
+
+```bash
+# Stop the service
+sudo systemctl stop bedrock_connect
+
+# Restart the service
+sudo systemctl restart bedrock_connect
+
+# Disable automatic startup
+sudo systemctl disable bedrock_connect
+```

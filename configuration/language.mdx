@@ -1,0 +1,187 @@
+---
+title: "Customize BedrockConnect's in-game UI text strings"
+description: "Override BedrockConnect's in-game text strings by providing a custom language.json file. Supports partial overrides — only changed keys are required."
+---
+
+BedrockConnect's in-game interface — button labels, form headings, error messages, and disconnect reasons — is driven by a built-in `language.json` file. You can override any of these strings by providing your own JSON file with just the keys you want to change. Keys you omit continue to use the built-in defaults, so you only need to include what you are actually modifying.
+
+## Enable a custom language file
+
+Point the `language` setting at your JSON file:
+
+<Tabs>
+  <Tab title="config.yml">
+    ```yaml
+    language: /path/to/language.json
+    ```
+  </Tab>
+  <Tab title="Startup args">
+    ```bash
+    java -jar BedrockConnect-1.0-SNAPSHOT.jar language=/path/to/language.json
+    ```
+  </Tab>
+  <Tab title="Environment variable">
+    ```bash
+    BC_LANGUAGE=/path/to/language.json java -jar BedrockConnect-1.0-SNAPSHOT.jar
+    ```
+  </Tab>
+</Tabs>
+
+When the file loads successfully, BedrockConnect logs:
+
+```
+[INFO] Loaded custom language elements
+```
+
+---
+
+## Default language strings
+
+The following is the complete built-in `language.json`. Use it as a reference when writing your overrides:
+
+```json
+{
+  "motd": {
+    "heading": "Message of the Day",
+    "continueBtn": "Continue to Server List"
+  },
+  "serverInfo": {
+    "motd": "Join To Open Server List",
+    "subMotd": "BedrockConnect Server List"
+  },
+  "main": {
+    "heading": "ServerList",
+    "message": "",
+    "connectBtn": "Connect to a Server",
+    "manageBtn": "Manage Server List",
+    "exitBtn": "Exit Server List"
+  },
+  "manage": {
+    "heading": "Manage Server List",
+    "addBtn": "Add a Server",
+    "removeBtn": "Remove a Server",
+    "editBtn": "Edit a Server"
+  },
+  "connect": {
+    "heading": "Connect to a Server",
+    "addressTitle": "Server Address",
+    "addressPlaceholder": "Please enter IP or Address",
+    "portTitle": "Server Port",
+    "portPlaceholder": "Please enter Port",
+    "displayNameTitle": "(Optional) Display Name on Server List",
+    "addToggle": "Add to server list"
+  },
+  "add": {
+    "heading": "Add a Server"
+  },
+  "edit": {
+    "heading": "Edit Server",
+    "chooseHeading": "Choose a Server",
+    "serverDropdown": "Servers"
+  },
+  "remove": {
+    "heading": "Remove Server",
+    "serverDropdown": "Servers"
+  },
+  "serverGroup": {
+    "backBtn": "Back To List"
+  },
+  "retriggerMsg": {
+    "tip": "Crouch or punch to re-trigger the popup",
+    "chat": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n==!!== Crouch or punch to re-trigger the popup ==!!==\n\n\n\n\n\n\n\n\n\n\n"
+  },
+  "error": {
+    "heading": "Error",
+    "addressLarge": "Address is too large. (Must be 253 characters or less)",
+    "portLarge": "Port is too large. (Must be less than 10 characters)",
+    "nameLarge": "Display name is too large. (Must be 36 characters or less)",
+    "invalidAddress": "Enter a valid address. (E.g. play.example.net, 172.16.254.1)",
+    "invalidPort": "Enter a valid port that contains only numbers",
+    "invalidName": "Display name can only contain letters, numbers, and spaces between characters",
+    "serverLimit": "You have hit your serverlist limit of %MAX_SERVERS% servers. Remove some to add more.",
+    "invalidUserServer": "Invalid server address",
+    "invalidServerConnect": "Please enter a valid IP/Address and port that contains only numbers.",
+    "invalidServerRemove": "Invalid server to remove",
+    "invalidServerEdit": "Invalid server to edit",
+    "transferError": "Error connecting to server. Invalid address."
+  },
+  "disconnect": {
+    "inactivity": "Kicked for inactivity",
+    "exit": "Exiting Server List",
+    "dataError": "We had some trouble receiving your player data. Please report this to the BedrockConnect GitHub if the issue continues."
+  }
+}
+```
+
+---
+
+## Language key reference
+
+| Section       | Key                    | Where it appears                                              |
+| ------------- | ---------------------- | ------------------------------------------------------------- |
+| `motd`        | `heading`              | Title shown on the MOTD screen.                               |
+| `motd`        | `continueBtn`          | Button that dismisses the MOTD and opens the server list.     |
+| `serverInfo`  | `motd`                 | Join message shown in the Minecraft server browser.           |
+| `serverInfo`  | `subMotd`              | Sub-text shown in the Minecraft server browser.               |
+| `main`        | `heading`              | Title of the main server list screen.                         |
+| `main`        | `message`              | Optional message displayed on the main screen (empty by default). |
+| `main`        | `connectBtn`           | Button to open the connect-to-server form.                    |
+| `main`        | `manageBtn`            | Button to open server list management.                        |
+| `main`        | `exitBtn`              | Button to leave the server list.                              |
+| `manage`      | `heading`              | Title of the manage server list screen.                       |
+| `manage`      | `addBtn`               | Add a server button label.                                    |
+| `manage`      | `removeBtn`            | Remove a server button label.                                 |
+| `manage`      | `editBtn`              | Edit a server button label.                                   |
+| `connect`     | `heading`              | Title of the connect form.                                    |
+| `connect`     | `addressTitle`         | Label for the server address input field.                     |
+| `connect`     | `addressPlaceholder`   | Placeholder text inside the address input.                    |
+| `connect`     | `portTitle`            | Label for the port input field.                               |
+| `connect`     | `portPlaceholder`      | Placeholder text inside the port input.                       |
+| `connect`     | `displayNameTitle`     | Label for the optional display name field.                    |
+| `connect`     | `addToggle`            | Toggle label for saving the server to the list.               |
+| `add`         | `heading`              | Title of the add server form.                                 |
+| `edit`        | `heading`              | Title of the edit server form.                                |
+| `edit`        | `chooseHeading`        | Title of the server selection step within the edit flow.      |
+| `edit`        | `serverDropdown`       | Label for the server selection dropdown.                      |
+| `remove`      | `heading`              | Title of the remove server form.                              |
+| `remove`      | `serverDropdown`       | Label for the server selection dropdown.                      |
+| `serverGroup` | `backBtn`              | Back button inside a server group menu.                       |
+| `retriggerMsg`| `tip`                  | Short in-game hint for re-opening the server list popup.      |
+| `retriggerMsg`| `chat`                 | Full chat message with the re-trigger hint.                   |
+| `error`       | `heading`              | Title shown on error screens.                                 |
+| `error`       | `addressLarge`         | Error when the entered address exceeds 253 characters.        |
+| `error`       | `portLarge`            | Error when the entered port exceeds 9 characters.             |
+| `error`       | `nameLarge`            | Error when the display name exceeds 36 characters.            |
+| `error`       | `invalidAddress`       | Error for a malformed server address.                         |
+| `error`       | `invalidPort`          | Error when the port contains non-numeric characters.          |
+| `error`       | `invalidName`          | Error for a display name with disallowed characters.          |
+| `error`       | `serverLimit`          | Error shown when a player's list is full. Use `%MAX_SERVERS%` as a placeholder for the configured limit. |
+| `error`       | `invalidUserServer`    | Error for an invalid user-submitted server address.           |
+| `error`       | `invalidServerConnect` | Error for an invalid address in the connect form.             |
+| `error`       | `invalidServerRemove`  | Error when an invalid server is selected for removal.         |
+| `error`       | `invalidServerEdit`    | Error when an invalid server is selected for editing.         |
+| `error`       | `transferError`        | Error shown when connecting to a server fails.                |
+| `disconnect`  | `inactivity`           | Kick message sent to idle players.                            |
+| `disconnect`  | `exit`                 | Disconnect message when a player exits the server list.       |
+| `disconnect`  | `dataError`            | Disconnect message when player data cannot be loaded.         |
+
+---
+
+## Example: partial override
+
+Your custom file only needs to contain the keys you want to change. This example renames the main screen heading and the exit button:
+
+```json
+{
+  "main": {
+    "heading": "My Network",
+    "exitBtn": "Leave"
+  }
+}
+```
+
+All other strings remain unchanged. The file is merged with the defaults at startup, not used as a complete replacement.
+
+<Note>
+  Keys present in your file that do not match any known key in the defaults are silently ignored.
+</Note>

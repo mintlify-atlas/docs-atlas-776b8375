@@ -1,0 +1,157 @@
+---
+title: "Pre-populate BedrockConnect with a custom server list"
+description: "Pre-populate your BedrockConnect instance with a list of servers players can join. Supports individual servers and grouped server menus."
+---
+
+Custom servers let you pre-populate the BedrockConnect server list with entries that every player sees when they connect. This is useful for directing players straight to your network's servers, removing the need for them to type an address manually. Custom servers appear alongside any servers the player has saved themselves, and alongside the featured servers if those are enabled.
+
+## Enable custom servers
+
+Point the `custom_servers` setting at a JSON file on your host machine:
+
+<Tabs>
+  <Tab title="config.yml">
+    ```yaml
+    custom_servers: /path/to/custom_servers.json
+    ```
+  </Tab>
+  <Tab title="Startup args">
+    ```bash
+    java -jar BedrockConnect-1.0-SNAPSHOT.jar custom_servers=/path/to/custom_servers.json
+    ```
+  </Tab>
+  <Tab title="Environment variable">
+    ```bash
+    BC_CUSTOM_SERVERS=/path/to/custom_servers.json java -jar BedrockConnect-1.0-SNAPSHOT.jar
+    ```
+  </Tab>
+</Tabs>
+
+BedrockConnect logs the number of loaded entries at startup:
+
+```
+[INFO] Loaded 2 custom servers
+```
+
+---
+
+## File format
+
+The custom servers file is a JSON array. Each element is either an individual server entry or a server group.
+
+### Individual servers
+
+Each server entry requires four fields:
+
+```json
+[
+  {
+    "name": "My Custom Server 1",
+    "iconUrl": "https://i.imgur.com/3BmFZRE.png",
+    "address": "mc1.example.com",
+    "port": 19132
+  },
+  {
+    "name": "My Custom Server 2",
+    "iconUrl": "https://i.imgur.com/3BmFZRE.png",
+    "address": "mc2.example.com",
+    "port": 19132
+  }
+]
+```
+
+| Field      | Type    | Description                                                        |
+| ---------- | ------- | ------------------------------------------------------------------ |
+| `name`     | string  | Display name shown to players in the server list.                  |
+| `iconUrl`  | string  | URL of an image to use as the server icon in the list.             |
+| `address`  | string  | Server hostname or IP address.                                     |
+| `port`     | integer | Server port number.                                                |
+
+### Server groups
+
+A server group bundles multiple servers under a single top-level menu item. When a player selects a group, they see the servers it contains. Add a `content` array instead of `address` and `port` to create a group:
+
+```json
+[
+  {
+    "name": "My Server Network",
+    "iconUrl": "https://i.imgur.com/3BmFZRE.png",
+    "content": [
+      {
+        "name": "Survival",
+        "iconUrl": "https://i.imgur.com/3BmFZRE.png",
+        "address": "survival.example.com",
+        "port": 19132
+      },
+      {
+        "name": "Creative",
+        "iconUrl": "https://i.imgur.com/3BmFZRE.png",
+        "address": "creative.example.com",
+        "port": 19132
+      }
+    ]
+  }
+]
+```
+
+| Field     | Type   | Description                                                           |
+| --------- | ------ | --------------------------------------------------------------------- |
+| `name`    | string | Display name for the group shown in the main server list.             |
+| `iconUrl` | string | URL of an image for the group icon.                                   |
+| `content` | array  | Array of individual server entries. Same format as individual servers.|
+
+You can mix individual servers and groups in the same file:
+
+```json
+[
+  {
+    "name": "My Server Network",
+    "iconUrl": "https://i.imgur.com/3BmFZRE.png",
+    "content": [
+      {
+        "name": "Survival",
+        "iconUrl": "https://i.imgur.com/3BmFZRE.png",
+        "address": "survival.example.com",
+        "port": 19132
+      }
+    ]
+  },
+  {
+    "name": "Event Server",
+    "iconUrl": "https://i.imgur.com/3BmFZRE.png",
+    "address": "events.example.com",
+    "port": 19132
+  }
+]
+```
+
+---
+
+## Interaction with other settings
+
+Custom servers work alongside the `user_servers` and `featured_servers` settings:
+
+- **`user_servers: true`** (default) — Players can still add their own entries on top of your custom servers. Set `user_servers: false` to lock the list to only your custom servers.
+- **`featured_servers: true`** (default) — Featured servers (Hive, CubeCraft, etc.) also appear in the list alongside your custom servers. Set `featured_servers: false` to hide them.
+
+<Tip>
+  To create a fully curated, closed list — custom servers only, no player additions, no featured servers — set both `user_servers: false` and `featured_servers: false`.
+</Tip>
+
+---
+
+## Docker usage
+
+When running BedrockConnect in Docker, mount your custom servers file into the container and reference its container path:
+
+```yaml
+services:
+  bedrockconnect:
+    image: pugmatt/bedrock-connect
+    volumes:
+      - ./custom_servers.json:/custom_servers.json
+    environment:
+      BC_CUSTOM_SERVERS: /custom_servers.json
+```
+
+The file is read once at startup. Restart the container after editing the file for changes to take effect.
